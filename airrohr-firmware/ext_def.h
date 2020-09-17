@@ -84,9 +84,9 @@ static const char NTP_SERVER_1[] PROGMEM = "0.pool.ntp.org";
 static const char NTP_SERVER_2[] PROGMEM = "1.pool.ntp.org";
 
 // define own API
-static const char HOST_CUSTOM[] PROGMEM = "192.168.234.1";
-static const char URL_CUSTOM[] PROGMEM = "/data.php";
-#define PORT_CUSTOM 80
+static const char HOST_CUSTOM[] PROGMEM = "192.168.100.73";
+static const char URL_CUSTOM[] PROGMEM = "";
+#define PORT_CUSTOM 5000
 #define USER_CUSTOM ""
 #define PWD_CUSTOM ""
 #define SSL_CUSTOM 0

@@ -4141,7 +4141,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	unsigned long sum_send_time = 0;
 
 	if (cfg::send2madavi) {
-		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("madavi.de: "));
+		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("madavi.de_change: "));
 		sum_send_time += sendData(LoggerMadavi, data, 0, HOST_MADAVI, URL_MADAVI);
 	}
 
@@ -4187,7 +4187,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		data_4_custom += "\", ";
 		data_4_custom += data_to_send;
 		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("custom api: "));
-		sum_send_time += sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::url_custom);
+		sum_send_time += sendData(LoggerCustom, data_4_custom, 0, "192.168.100.73:5000", "");
 	}
 
 	if (cfg::send2csv) {
@@ -4288,6 +4288,7 @@ void loop(void) {
 	String result_GPS, result_DNMS;
 
 	unsigned sum_send_time = 0;
+	Serial.println("Work!");
 
 	act_micro = micros();
 	act_milli = millis();
