@@ -112,6 +112,7 @@ window.location = \"http://192.168.4.1/config\";\
 
 const char WEB_B_BR_BR[] PROGMEM = "</b><br/><br/>";
 const char WEB_BRACE_BR[] PROGMEM = ")<br/>";
+const char WEB_BRACE_BRE[] PROGMEM = "<br/>";
 const char WEB_B_BR[] PROGMEM = "</b><br/>";
 const char WEB_BR_BR[] PROGMEM = "<br/><br/>";
 const char WEB_BR_FORM[] PROGMEM = "<br/></form>";

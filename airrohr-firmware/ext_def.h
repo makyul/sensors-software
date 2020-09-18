@@ -19,6 +19,8 @@ const char WWW_PASSWORD[] PROGMEM = "feinstaub";
 #define SSL_SENSORCOMMUNITY 0
 #define SEND2MADAVI 1
 #define SSL_MADAVI 0
+#define SEND2ROBONOMICS 1
+#define SSL_ROBONOMICS 0
 #define SEND2SENSEMAP 0
 #define SEND2FSAPP 0
 #define SEND2AIRCMS 0
@@ -34,6 +36,7 @@ const char WWW_PASSWORD[] PROGMEM = "feinstaub";
 enum LoggerEntry {
     LoggerSensorCommunity,
     LoggerMadavi,
+    LoggerRobonomics,
     LoggerSensemap,
     LoggerFSapp,
     Loggeraircms,
@@ -90,6 +93,10 @@ static const char URL_CUSTOM[] PROGMEM = "";
 #define USER_CUSTOM ""
 #define PWD_CUSTOM ""
 #define SSL_CUSTOM 0
+
+static const char HOST_ROBONOMICS[] PROGMEM = "192.168.100.73";
+static const char URL_ROBONOMICS[] PROGMEM = "";
+#define PORT_ROBONOMICS 5000
 
 // define own InfluxDB
 static const char HOST_INFLUX[] PROGMEM = "influx.server";

@@ -225,6 +225,7 @@ namespace cfg {
 	// send to "APIs"
 	bool send2dusti = SEND2SENSORCOMMUNITY;
 	bool send2madavi = SEND2MADAVI;
+	bool send2robonomics = SEND2ROBONOMICS;
 	bool send2sensemap = SEND2SENSEMAP;
 	bool send2fsapp = SEND2FSAPP;
 	bool send2aircms = SEND2AIRCMS;
@@ -249,6 +250,7 @@ namespace cfg {
 
 	// API settings
 	bool ssl_madavi = SSL_MADAVI;
+	bool ssl_robonomics = SSL_ROBONOMICS;
 	bool ssl_dusti = SSL_SENSORCOMMUNITY;
 	char senseboxid[LEN_SENSEBOXID] = SENSEBOXID;
 
@@ -262,8 +264,11 @@ namespace cfg {
 
 	char host_custom[LEN_HOST_CUSTOM];
 	char url_custom[LEN_URL_CUSTOM];
+	char host_robonomics[100];
+	char url_robonomics[100];
 	bool ssl_custom = SSL_CUSTOM;
 	unsigned port_custom = PORT_CUSTOM;
+	unsigned port_robonomics = PORT_ROBONOMICS;
 	char user_custom[LEN_USER_CUSTOM] = USER_CUSTOM;
 	char pwd_custom[LEN_CFG_PASSWORD] = PWD_CUSTOM;
 
@@ -275,6 +280,8 @@ namespace cfg {
 		strcpy_P(wlanpwd, WLANPWD);
 		strcpy_P(host_custom, HOST_CUSTOM);
 		strcpy_P(url_custom, URL_CUSTOM);
+		strcpy_P(host_robonomics, HOST_ROBONOMICS);
+		strcpy_P(url_robonomics, URL_ROBONOMICS);
 		strcpy_P(host_influx, HOST_INFLUX);
 		strcpy_P(url_influx, URL_INFLUX);
 		strcpy_P(measurement_name_influx, MEASUREMENT_NAME_INFLUX);
@@ -1009,6 +1016,11 @@ static void createLoggerConfigs() {
 		loggerConfigs[LoggerMadavi].destport = 443;
 		loggerConfigs[LoggerMadavi].session = new_session();
 	}
+	loggerConfigs[LoggerRobonomics].destport = PORT_ROBONOMICS;
+	if (cfg::send2robonomics && cfg::ssl_robonomics) {
+		loggerConfigs[LoggerRobonomics].destport = 443;
+		loggerConfigs[LoggerRobonomics].session = new_session();
+	}
 	loggerConfigs[LoggerSensemap].destport = PORT_SENSEMAP;
 	loggerConfigs[LoggerSensemap].session = new_session();
 	loggerConfigs[LoggerFSapp].destport = PORT_FSAPP;
@@ -1480,6 +1492,9 @@ static void webserver_config_send_body_get(String& page_content) {
 	page_content += FPSTR(WEB_NBSP_NBSP_BRACE);
 	page_content += form_checkbox(Config_ssl_madavi, FPSTR(WEB_HTTPS), false);
 	page_content += FPSTR(WEB_BRACE_BR);
+	page_content += form_checkbox(Config_send2robonomics, F("API Robonomics"), false);
+	
+	page_content += FPSTR(WEB_BRACE_BRE);
 	add_form_checkbox(Config_send2csv, tmpl(FPSTR(INTL_SEND_TO), FPSTR(WEB_CSV)));
 	add_form_checkbox(Config_send2fsapp, tmpl(FPSTR(INTL_SEND_TO), FPSTR(WEB_FEINSTAUB_APP)));
 	add_form_checkbox(Config_send2aircms, tmpl(FPSTR(INTL_SEND_TO), F("aircms.online")));
@@ -4092,6 +4107,10 @@ static void logEnabledAPIs() {
 		debug_outln_info(F("custom API"));
 	}
 
+	if (cfg::send2robonomics) {
+		debug_outln_info(F("robonomics API"));
+	}
+
 	if (cfg::send2aircms) {
 		debug_outln_info(F("aircms API"));
 	}
@@ -4187,7 +4206,18 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		data_4_custom += "\", ";
 		data_4_custom += data_to_send;
 		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("custom api: "));
-		sum_send_time += sendData(LoggerCustom, data_4_custom, 0, "192.168.100.73:5000", "");
+		sum_send_time += sendData(LoggerCustom, data_4_custom, 0, cfg::host_custom, cfg::url_custom);
+	}
+
+	if (cfg::send2robonomics) {
+		String data_to_send = data;
+		data_to_send.remove(0, 1);
+		String data_4_custom(F("{\"esp8266id\": \""));
+		data_4_custom += esp_chipid;
+		data_4_custom += "\", ";
+		data_4_custom += data_to_send;
+		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("robonomics: "));
+		sum_send_time += sendData(LoggerRobonomics, data_4_custom, 0, cfg::host_robonomics, cfg::url_robonomics);
 	}
 
 	if (cfg::send2csv) {
@@ -4288,7 +4318,6 @@ void loop(void) {
 	String result_GPS, result_DNMS;
 
 	unsigned sum_send_time = 0;
-	Serial.println("Work!");
 
 	act_micro = micros();
 	act_milli = millis();

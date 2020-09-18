@@ -50,6 +50,8 @@ enum ConfigShapeId {
 	Config_ssl_dusti,
 	Config_send2madavi,
 	Config_ssl_madavi,
+	Config_send2robonomics,
+	Config_ssl_robonomics,
 	Config_send2sensemap,
 	Config_send2fsapp,
 	Config_send2aircms,
@@ -73,6 +75,9 @@ enum ConfigShapeId {
 	Config_host_custom,
 	Config_url_custom,
 	Config_port_custom,
+	Config_host_robonomics,
+	Config_url_robonomics,
+	Config_port_robonomics,
 	Config_user_custom,
 	Config_pwd_custom,
 	Config_ssl_custom,
@@ -111,6 +116,8 @@ const char CFG_KEY_SEND2DUSTI[] PROGMEM = "send2dusti";
 const char CFG_KEY_SSL_DUSTI[] PROGMEM = "ssl_dusti";
 const char CFG_KEY_SEND2MADAVI[] PROGMEM = "send2madavi";
 const char CFG_KEY_SSL_MADAVI[] PROGMEM = "ssl_madavi";
+const char CFG_KEY_SEND2ROBONOMICS[] PROGMEM = "send2robonomics";
+const char CFG_KEY_SSL_ROBONOMICS[] PROGMEM = "ssl_robonomics";
 const char CFG_KEY_SEND2SENSEMAP[] PROGMEM = "send2sensemap";
 const char CFG_KEY_SEND2FSAPP[] PROGMEM = "send2fsapp";
 const char CFG_KEY_SEND2AIRCMS[] PROGMEM = "send2aircms";
@@ -134,6 +141,9 @@ const char CFG_KEY_SEND2CUSTOM[] PROGMEM = "send2custom";
 const char CFG_KEY_HOST_CUSTOM[] PROGMEM = "host_custom";
 const char CFG_KEY_URL_CUSTOM[] PROGMEM = "url_custom";
 const char CFG_KEY_PORT_CUSTOM[] PROGMEM = "port_custom";
+const char CFG_KEY_HOST_ROBONOMICS[] PROGMEM = "host_robonomics";
+const char CFG_KEY_URL_ROBONOMICS[] PROGMEM = "url_robonomics";
+const char CFG_KEY_PORT_ROBONOMICS[] PROGMEM = "port_robonomics";
 const char CFG_KEY_USER_CUSTOM[] PROGMEM = "user_custom";
 const char CFG_KEY_PWD_CUSTOM[] PROGMEM = "pwd_custom";
 const char CFG_KEY_SSL_CUSTOM[] PROGMEM = "ssl_custom";
@@ -172,6 +182,8 @@ static constexpr ConfigShapeEntry configShape[] PROGMEM = {
 	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SSL_DUSTI), &cfg::ssl_dusti },
 	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SEND2MADAVI), &cfg::send2madavi },
 	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SSL_MADAVI), &cfg::ssl_madavi },
+	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SEND2ROBONOMICS), &cfg::send2robonomics },
+	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SSL_ROBONOMICS), &cfg::ssl_robonomics },
 	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SEND2SENSEMAP), &cfg::send2sensemap },
 	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SEND2FSAPP), &cfg::send2fsapp },
 	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SEND2AIRCMS), &cfg::send2aircms },
@@ -195,6 +207,9 @@ static constexpr ConfigShapeEntry configShape[] PROGMEM = {
 	{ Config_Type_String, sizeof(cfg::host_custom)-1, FPSTR(CFG_KEY_HOST_CUSTOM), cfg::host_custom },
 	{ Config_Type_String, sizeof(cfg::url_custom)-1, FPSTR(CFG_KEY_URL_CUSTOM), cfg::url_custom },
 	{ Config_Type_UInt, 0, FPSTR(CFG_KEY_PORT_CUSTOM), &cfg::port_custom },
+	{ Config_Type_String, sizeof(cfg::host_robonomics)-1, FPSTR(CFG_KEY_HOST_ROBONOMICS), cfg::host_robonomics },
+	{ Config_Type_String, sizeof(cfg::url_robonomics)-1, FPSTR(CFG_KEY_URL_ROBONOMICS), cfg::url_robonomics },
+	{ Config_Type_UInt, 0, FPSTR(CFG_KEY_PORT_ROBONOMICS), &cfg::port_robonomics },
 	{ Config_Type_String, sizeof(cfg::user_custom)-1, FPSTR(CFG_KEY_USER_CUSTOM), cfg::user_custom },
 	{ Config_Type_Password, sizeof(cfg::pwd_custom)-1, FPSTR(CFG_KEY_PWD_CUSTOM), cfg::pwd_custom },
 	{ Config_Type_Bool, 0, FPSTR(CFG_KEY_SSL_CUSTOM), &cfg::ssl_custom },
