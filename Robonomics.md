@@ -6,20 +6,25 @@
 * connecting wires
 
 ### Installation
-Download loader from here: https://github.com/opendata-stuttgart/airrohr-firmware-flasher/releases
-
-Chose version for your OS:
-
-![list](https://github.com/LoSk-p/media/blob/master/esp/load.jpg)
-### Building
-Run loader and choose firmware.
-
-For ubuntu:
-```bash 
-chmod +x airRohr-firmware-flasher-0.3.1-Ubuntu_18.04_amd64
-./airRohr-firmware-flasher-0.3.1-Ubuntu_18.04_amd64
+Install platformio:
+```bash
+pip install -U platformio
 ```
-![loader](https://github.com/LoSk-p/media/blob/master/esp/loader_1.jpg)
+Clone ropository with firmware
+```bash
+git clone https://github.com/LoSk-p/sensors-software
+cd sensors-software/airrohr-firmware
+```
+Connect your ESP to computer via micro USB and upload firmware:
+```bash
+platformio run -e nodemcuv2_en -t upload
+```
+You can choose language changing 'nodemcuv2_en'.
+
+In the end you will see
+
+![upload](https://github.com/LoSk-p/media/blob/master/esp/upload.jpg)
+
 ### Configuration
 Connect to airRohr--xxxxxxx wi-fi network and in your browser write address 192.168.4.1:
 
@@ -35,9 +40,13 @@ Find NodeMcu in local network, for ubuntu you can use nmap:
 ```bash
 nmap -sn 192.168.100.0/24
 ```
-Write in your browser it's local address, go to Configuration and tick 'Send to custom API'. In 'Server' write 'connectivity.robonomics.network' and 'Port' - '65', then enable GPS and all sensors that you use.
+Write in your browser it's local address, go to Configuration and tick 'Send to custom API'. In 'Server' write 'connectivity.robonomics.network' and 'Port' - '65'.
 
 ![robonomics](https://github.com/LoSk-p/media/blob/master/esp/robonomics.jpg)
+
+Then enable GPS and all sensors that you use and write your coordinates:
+
+![gps](https://github.com/LoSk-p/media/blob/master/esp/gps.jpg)
 
 ### Results
 Go to sensors.robonomics.network, and you will see your sensor on the map.
