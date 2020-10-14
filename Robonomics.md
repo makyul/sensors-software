@@ -19,7 +19,7 @@ Connect your ESP to computer via micro USB and upload firmware:
 ```bash
 platformio run -e nodemcuv2_en -t upload
 ```
-You can chose language changing 'nodemcuv2_en'.
+You can choose language changing 'nodemcuv2_en'.
 
 In the end you will see
 
