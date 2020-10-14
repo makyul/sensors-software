@@ -50,5 +50,4 @@ Then enable GPS and all sensors that you use and write your coordinates:
 
 ### Results
 Go to [sensors.robonomics.network](https://sensors.robonomics.network/#/), and you will see your sensor on the map.
-![link](https://github.com/LoSk-p/media/blob/master/esp/sensors_rob.jpg)
 ![map](https://github.com/LoSk-p/media/blob/master/esp/map.jpg)
