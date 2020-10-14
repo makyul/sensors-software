@@ -17,8 +17,10 @@ cd sensors-software/airrohr-firmware
 ```
 Connect your ESP to computer via micro USB and upload firmware:
 ```bash
-platformio run -e nodemcuv2_ru -t upload
+platformio run -e nodemcuv2_en -t upload
 ```
+You can chose language changing 'nodemcuv2_en'.
+
 In the end you will see
 
 ![upload](https://github.com/LoSk-p/media/blob/master/esp/upload.jpg)
