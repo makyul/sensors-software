@@ -34,6 +34,8 @@ const char INTL_DS18B20[] PROGMEM = "DS18B20 ({t})";
 const char INTL_DNMS[] PROGMEM = "DNMS ({l_a})";
 const char INTL_DNMS_CORRECTION[] PROGMEM ="correction in dB(A)";
 const char INTL_NEO6M[] PROGMEM = "GPS (NEO 6M)";
+const char INTL_COORD_LAT[] PROGMEM = "Latitude";
+const char INTL_COORD_LON[] PROGMEM = "Longtitude";
 const char INTL_BASICAUTH[] PROGMEM = "Authentication";
 
 const char INTL_FS_WIFI_DESCRIPTION[] PROGMEM = "WiFi Sensor in configuration mode";

@@ -94,7 +94,7 @@ static const char URL_CUSTOM[] PROGMEM = "";
 #define PWD_CUSTOM ""
 #define SSL_CUSTOM 0
 
-static const char HOST_ROBONOMICS[] PROGMEM = "192.168.100.73";
+static const char HOST_ROBONOMICS[] PROGMEM = "192.168.100.60";
 static const char URL_ROBONOMICS[] PROGMEM = "";
 #define PORT_ROBONOMICS 5000
 
@@ -252,6 +252,8 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 // GPS, preferred Neo-6M
 #define GPS_READ 0
 #define GPS_API_PIN 9
+#define GPS_LAT "0.0"
+#define GPS_LON "0.0"
 
 // MHZ19 CO2 sensor
 #define MHZ19_READ 0

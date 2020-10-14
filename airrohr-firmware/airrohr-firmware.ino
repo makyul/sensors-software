@@ -220,6 +220,8 @@ namespace cfg {
 	bool ds18b20_read = DS18B20_READ;
 	bool dnms_read = DNMS_READ;
 	char dnms_correction[LEN_DNMS_CORRECTION] = DNMS_CORRECTION;
+	char lat_gps[LEN_GPS_LAT] = GPS_LAT;
+	char lon_gps[LEN_GPS_LON] = GPS_LON;
 	bool gps_read = GPS_READ;
 
 	// send to "APIs"
@@ -494,9 +496,9 @@ float last_value_PMS_P1 = -1.0;
 float last_value_PMS_P2 = -1.0;
 float last_value_HPM_P1 = -1.0;
 float last_value_HPM_P2 = -1.0;
-double last_value_GPS_lat = -200.0;
-double last_value_GPS_lon = -200.0;
-double last_value_GPS_alt = -1000.0;
+double last_value_GPS_lat = 59.934;
+double last_value_GPS_lon = 30.335;
+double last_value_GPS_alt = -200;
 String last_value_GPS_date;
 String last_value_GPS_time;
 String last_data_string;
@@ -1477,6 +1479,8 @@ static void webserver_config_send_body_get(String& page_content) {
 	add_form_checkbox_sensor(Config_pms_read, FPSTR(INTL_PMS));
 	add_form_checkbox_sensor(Config_bmp_read, FPSTR(INTL_BMP180));
 	add_form_checkbox(Config_gps_read, FPSTR(INTL_NEO6M));
+	add_form_input(page_content, Config_lat_gps, FPSTR(INTL_COORD_LAT), LEN_GPS_LAT-1);
+	add_form_input(page_content, Config_lon_gps, FPSTR(INTL_COORD_LON), LEN_GPS_LON-1);
 
 	page_content += FPSTR(WEB_BR_LF_B);
 	page_content += F("APIs");
@@ -1600,6 +1604,8 @@ static void webserver_config_send_body_post(String& page_content) {
 	add_line_value_bool(page_content, FPSTR(INTL_READ_FROM), FPSTR(SENSORS_DNMS), dnms_read);
 	add_line_value(page_content, FPSTR(INTL_DNMS_CORRECTION), String(dnms_correction));
 	add_line_value_bool(page_content, FPSTR(INTL_READ_FROM), F("GPS"), gps_read);
+	add_line_value(page_content, FPSTR(INTL_COORD_LAT), String(lat_gps));
+	add_line_value(page_content, FPSTR(INTL_COORD_LON), String(lon_gps));
 
 	// Paginate after ~ 1500 bytes
 	server.sendContent(page_content);
@@ -3337,21 +3343,22 @@ static void fetchSensorDNMS(String& s) {
  *****************************************************************/
 static void fetchSensorGPS(String& s) {
 	debug_outln_verbose(FPSTR(DBG_TXT_START_READING), "GPS");
+	bool flag = true;
 
 	if (gps.location.isUpdated()) {
 		if (gps.location.isValid()) {
 			last_value_GPS_lat = gps.location.lat();
 			last_value_GPS_lon = gps.location.lng();
 		} else {
-			last_value_GPS_lat = -200;
-			last_value_GPS_lon = -200;
+			last_value_GPS_lat = 59.934;
+			last_value_GPS_lon = 30.335;
 			debug_outln_verbose(F("Lat/Lng INVALID"));
 		}
 		if (gps.altitude.isValid()) {
 			last_value_GPS_alt = gps.altitude.meters();
 			String gps_alt(last_value_GPS_lat);
 		} else {
-			last_value_GPS_alt = -1000;
+			last_value_GPS_alt = 200;
 			debug_outln_verbose(F("Altitude INVALID"));
 		}
 		if (gps.date.isValid()) {
@@ -3370,16 +3377,24 @@ static void fetchSensorGPS(String& s) {
 		} else {
 			debug_outln_verbose(F("Time: INVALID"));
 		}
+	} else {
+		flag = false;
+		char* pEnd = nullptr;
+		last_value_GPS_lat = atof(cfg::lat_gps);
+		last_value_GPS_lon = atof(cfg::lat_gps);
 	}
 
 	if (send_now) {
+
 		debug_outln_info(F("Lat: "), String(last_value_GPS_lat, 6));
 		debug_outln_info(F("Lng: "), String(last_value_GPS_lon, 6));
+
 		debug_outln_info(F("Date: "), last_value_GPS_date);
 		debug_outln_info(F("Time "), last_value_GPS_time);
 
 		add_Value2Json(s, F("GPS_lat"), String(last_value_GPS_lat, 6));
 		add_Value2Json(s, F("GPS_lon"), String(last_value_GPS_lon, 6));
+
 		add_Value2Json(s, F("GPS_height"), F("Altitude: "), last_value_GPS_alt);
 		add_Value2Json(s, F("GPS_date"), last_value_GPS_date);
 		add_Value2Json(s, F("GPS_time"), last_value_GPS_time);
