@@ -15,7 +15,7 @@ Clone ropository with firmware
 git clone https://github.com/LoSk-p/sensors-software
 cd sensors-software/airrohr-firmware
 ```
-Connect your ESP to computer viz micro USB and upload firmware:
+Connect your ESP to computer via micro USB and upload firmware:
 ```bash
 platformio run -e nodemcuv2_ru -t upload
 ```
