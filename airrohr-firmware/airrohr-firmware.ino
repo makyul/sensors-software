@@ -3378,10 +3378,8 @@ static void fetchSensorGPS(String& s) {
 			debug_outln_verbose(F("Time: INVALID"));
 		}
 	} else {
-		flag = false;
-		char* pEnd = nullptr;
 		last_value_GPS_lat = atof(cfg::lat_gps);
-		last_value_GPS_lon = atof(cfg::lat_gps);
+		last_value_GPS_lon = atof(cfg::lon_gps);
 	}
 
 	if (send_now) {
