@@ -19,7 +19,7 @@ Connect your ESP to computer via micro USB and upload firmware:
 ```bash
 platformio run -e nodemcuv2_en -t upload
 ```
-You can choose language changing 'nodemcuv2_en'.
+You can choose language changing "nodemcuv2_en".
 
 In the end you will see
 
@@ -36,13 +36,20 @@ Go to Configuration and in Wi-Fi Settings add information about your wi-fi netwo
 
 Reboot NodeMcu and it will connect to your wi-fi.
 
-Find NodeMcu in local network, for ubuntu you can use nmap:
+Find NodeMcu in local network, for ubuntu firstly find your address:
+```bash
+ip a
+```
+
+![ipa](https://github.com/LoSk-p/media/blob/master/esp/ipa.jpg)
+
+Then you can find NodeMcu with nmap (use your address with "0" in the end):
 ```bash
 nmap -sn 192.168.100.0/24
 ```
-Write in your browser it's local address, go to Configuration and tick 'Send to custom API'. In 'Server' write 'connectivity.robonomics.network' and 'Port' - '65'.
+Write in your browser it's local address, go to Configuration and tick 'API Robonomics'. 
 
-![robonomics](https://github.com/LoSk-p/media/blob/master/esp/robonomics.jpg)
+![robonomics](https://github.com/LoSk-p/media/blob/master/esp/APIrobonomics.jpg)
 
 Then enable GPS and all sensors that you use and write your coordinates:
 
