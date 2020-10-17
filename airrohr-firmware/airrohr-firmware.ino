@@ -252,7 +252,6 @@ namespace cfg {
 
 	// API settings
 	bool ssl_madavi = SSL_MADAVI;
-	bool ssl_robonomics = SSL_ROBONOMICS;
 	bool ssl_dusti = SSL_SENSORCOMMUNITY;
 	char senseboxid[LEN_SENSEBOXID] = SENSEBOXID;
 
@@ -266,11 +265,8 @@ namespace cfg {
 
 	char host_custom[LEN_HOST_CUSTOM];
 	char url_custom[LEN_URL_CUSTOM];
-	char host_robonomics[100];
-	char url_robonomics[100];
 	bool ssl_custom = SSL_CUSTOM;
 	unsigned port_custom = PORT_CUSTOM;
-	unsigned port_robonomics = PORT_ROBONOMICS;
 	char user_custom[LEN_USER_CUSTOM] = USER_CUSTOM;
 	char pwd_custom[LEN_CFG_PASSWORD] = PWD_CUSTOM;
 
@@ -282,8 +278,6 @@ namespace cfg {
 		strcpy_P(wlanpwd, WLANPWD);
 		strcpy_P(host_custom, HOST_CUSTOM);
 		strcpy_P(url_custom, URL_CUSTOM);
-		strcpy_P(host_robonomics, HOST_ROBONOMICS);
-		strcpy_P(url_robonomics, URL_ROBONOMICS);
 		strcpy_P(host_influx, HOST_INFLUX);
 		strcpy_P(url_influx, URL_INFLUX);
 		strcpy_P(measurement_name_influx, MEASUREMENT_NAME_INFLUX);
@@ -1019,10 +1013,7 @@ static void createLoggerConfigs() {
 		loggerConfigs[LoggerMadavi].session = new_session();
 	}
 	loggerConfigs[LoggerRobonomics].destport = PORT_ROBONOMICS;
-	if (cfg::send2robonomics && cfg::ssl_robonomics) {
-		loggerConfigs[LoggerRobonomics].destport = 443;
-		loggerConfigs[LoggerRobonomics].session = new_session();
-	}
+
 	loggerConfigs[LoggerSensemap].destport = PORT_SENSEMAP;
 	loggerConfigs[LoggerSensemap].session = new_session();
 	loggerConfigs[LoggerFSapp].destport = PORT_FSAPP;
@@ -3400,7 +3391,7 @@ static void fetchSensorGPS(String& s) {
 	}
 
 	if ( count_sends > 0 && gps.charsProcessed() < 10) {
-		debug_outln_error(F("No GPS data received: check wiring"));
+		//debug_outln_error(F("No GPS data received: check wiring"));
 		gps_init_failed = true;
 	}
 
@@ -4225,12 +4216,12 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	if (cfg::send2robonomics) {
 		String data_to_send = data;
 		data_to_send.remove(0, 1);
-		String data_4_custom(F("{\"esp8266id\": \""));
-		data_4_custom += esp_chipid;
-		data_4_custom += "\", ";
-		data_4_custom += data_to_send;
+		String data_4_robonomics(F("{\"esp8266id\": \""));
+		data_4_robonomics += esp_chipid;
+		data_4_robonomics += "\", ";
+		data_4_robonomics += data_to_send;
 		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("robonomics: "));
-		sum_send_time += sendData(LoggerRobonomics, data_4_custom, 0, cfg::host_robonomics, cfg::url_robonomics);
+		sum_send_time += sendData(LoggerRobonomics, data_4_robonomics, 0, HOST_ROBONOMICS, URL_ROBONOMICS);
 	}
 
 	if (cfg::send2csv) {
