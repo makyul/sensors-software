@@ -30,7 +30,6 @@ Bool		ssl_dusti
 Bool		send2madavi
 Bool		ssl_madavi
 Bool		send2robonomics
-Bool		ssl_robonomics
 Bool		send2sensemap
 Bool		send2fsapp
 Bool		send2aircms
@@ -54,9 +53,6 @@ Bool		send2custom
 String		host_custom
 String		url_custom
 UInt		port_custom
-String		host_robonomics
-String		url_robonomics
-UInt		port_robonomics
 String		user_custom
 Password		pwd_custom
 Bool		ssl_custom
