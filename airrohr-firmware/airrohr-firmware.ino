@@ -4421,10 +4421,12 @@ void loop(void) {
 		}
 	}
 
-	if (cfg::gps_read && !gps_init_failed) {
+	if (cfg::gps_read) {
 		// process serial GPS data..
-		while (serialGPS->available() > 0) {
-			gps.encode(serialGPS->read());
+		if (!gps_init_failed) {
+			while (serialGPS->available() > 0) {
+				gps.encode(serialGPS->read());
+			}
 		}
 
 		if ((msSince(starttime_GPS) > SAMPLETIME_GPS_MS) || send_now) {
