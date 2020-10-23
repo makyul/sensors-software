@@ -6,6 +6,7 @@
 * connecting wires
 
 ### Installation
+#### For Linux:
 Install platformio:
 ```bash
 pip install -U platformio
@@ -24,6 +25,33 @@ You can choose language changing "nodemcuv2_en".
 In the end you will see
 
 ![upload](https://github.com/LoSk-p/media/blob/master/esp/upload.jpg)
+#### For Windows:
+Download and unpack repository with firmware from https://github.com/LoSk-p/sensors-software. Choose "Download ZIP":
+
+![git](https://github.com/LoSk-p/media/blob/master/git.PNG)
+
+Then install Visual Studio Code. You can download it from [here](https://code.visualstudio.com/Download).
+
+In Visual Studio Code you need to install Platformio IDE extention. Platformio use python so if you don't have it or you have python version less then 3.5, install the latest version of python3 (you can install it from [here](https://www.python.org/downloads/)). 
+
+In Extentions find Platformio IDE and install it:
+
+![ext](https://github.com/LoSk-p/media/blob/master/ist_plat.PNG)
+
+Go to Home and click to Open Project:
+
+![open_pr](https://github.com/LoSk-p/media/blob/master/plat_home.PNG)
+
+Find sensors-software-master directory, choose airrohr-firmware and open it:
+
+![proj](https://github.com/LoSk-p/media/blob/master/open_proj.PNG)
+
+Connect your ESP to computer via micro USB, then open terminal and write:
+```bash
+pio run -e nodemcuv2_en -t upload
+```
+
+![term](https://github.com/LoSk-p/media/blob/master/terminal.PNG)
 
 ### Configuration
 Connect to airRohr--xxxxxxx wi-fi network and in your browser write address 192.168.4.1:
@@ -36,7 +64,9 @@ Go to Configuration and in Wi-Fi Settings add information about your wi-fi netwo
 
 Reboot NodeMcu and it will connect to your wi-fi.
 
-Find NodeMcu in local network, for ubuntu firstly find your address:
+Find NodeMcu in local network.
+#### For Linux:
+Firstly find your address:
 ```bash
 ip a
 ```
@@ -47,6 +77,8 @@ Then you can find NodeMcu with nmap (use your address with "0" in the end):
 ```bash
 nmap -sn 192.168.100.0/24
 ```
+#### For Windows:
+
 Write in your browser it's local address, go to Configuration and tick 'API Robonomics'. 
 
 ![robonomics](https://github.com/LoSk-p/media/blob/master/esp/APIrobonomics.jpg)
