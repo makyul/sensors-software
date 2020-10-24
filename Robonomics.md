@@ -28,32 +28,11 @@ In the end you will see
 
 ---
 ### For Windows:
-Download and unpack repository with firmware from https://github.com/LoSk-p/sensors-software. Choose "Download ZIP":
+Download and unpack airrohr-flasher.rar from https://github.com/LoSk-p/airrohr-firmware-flasher/releases/tag/v4.
 
-![git](https://github.com/LoSk-p/media/blob/master/git.PNG)
+Connect your ESP to computer via micro USB, then run airrohr-flasher.exe and click to Upload:
 
-Then install Visual Studio Code. You can download it from [here](https://code.visualstudio.com/Download).
-
-In Visual Studio Code you need to install Platformio IDE extention. Platformio use python so if you don't have it or you have python version less then 3.5, install the latest version of python3 (you can install it from [here](https://www.python.org/downloads/)). 
-
-In Extentions find Platformio IDE and install it:
-
-![ext](https://github.com/LoSk-p/media/blob/master/ist_plat.PNG)
-
-Go to Home and click to Open Project:
-
-![open_pr](https://github.com/LoSk-p/media/blob/master/plat_home.PNG)
-
-Find sensors-software-master directory, choose airrohr-firmware and open it:
-
-![proj](https://github.com/LoSk-p/media/blob/master/open_proj.PNG)
-
-Connect your ESP to computer via micro USB, then open terminal and write:
-```bash
-pio run -e nodemcuv2_en -t upload
-```
-
-![term](https://github.com/LoSk-p/media/blob/master/terminal.PNG)
+![loader](https://github.com/LoSk-p/media/blob/master/loader.PNG)
 
 ---
 ## Configuration
