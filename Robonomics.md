@@ -12,6 +12,7 @@ Install required packages:
 sudo apt update
 sudo apt install python3-pip
 sudo apt install git
+sudo apt install nmap
 ```
 Install platformio:
 ```bash
@@ -21,7 +22,7 @@ To get access to USB port you need to add user to dialout group:
 ```bash
 sudo usermod -a -G dialout username
 ```
-Where "username" is your ubuntu username.
+Where "username" is your username.
 
 Then you need to restart computer.
 
