@@ -7,11 +7,25 @@
 ---
 ## Installation
 ### For Linux:
+Install required packages:
+```bash
+sudo apt update
+sudo apt install python3-pip
+sudo apt install git
+```
 Install platformio:
 ```bash
-pip install -U platformio
+pip3 install -U platformio
 ```
-Clone ropository with firmware
+To get access to USB port you need to add user to dialout group:
+```bash
+sudo usermod -a -G dialout username
+```
+Where "username" is your ubuntu username.
+
+Then you need to restart computer.
+
+Clone ropository with firmware:
 ```bash
 git clone https://github.com/LoSk-p/sensors-software
 cd sensors-software/airrohr-firmware
@@ -36,7 +50,8 @@ Connect your ESP to computer via micro USB, then run airrohr-flasher.exe and cli
 
 ---
 ## Configuration
-Connect to airRohr--xxxxxxx wi-fi network and in your browser write address 192.168.4.1:
+Reboot your ESP (just reconnect USB to computer).
+Then connect to airRohr--xxxxxxx wi-fi network and in your browser write address 192.168.4.1:
 
 ![menu](https://github.com/LoSk-p/media/blob/master/esp/menu1.jpg)
 
@@ -44,7 +59,9 @@ Go to Configuration and in Wi-Fi Settings add information about your wi-fi netwo
 
 ![config](https://github.com/LoSk-p/media/blob/master/esp/config.png)
 
-Reboot NodeMcu and it will connect to your wi-fi.
+Then press "Save configuration and restart" and ESP will connect to your wi-fi.
+
+![save](https://github.com/LoSk-p/media/blob/master/Снимок.PNG)
 
 ---
 Then you need to find NodeMcu in local network.
