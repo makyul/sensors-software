@@ -57,7 +57,7 @@ Then connect to airRohr--xxxxxxx wi-fi network and in your browser write address
 
 Go to Configuration and in Wi-Fi Settings add information about your wi-fi network:
 
-![config](https://github.com/LoSk-p/media/blob/master/esp/config.png)
+![config](https://github.com/LoSk-p/media/blob/master/W-fi.PNG)
 
 Then press "Save configuration and restart" and ESP will connect to your wi-fi.
 
