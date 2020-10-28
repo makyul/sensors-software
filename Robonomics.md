@@ -90,7 +90,7 @@ Then press "Save configuration and restart" and ESP will connect to your wi-fi.
 ![save](https://github.com/LoSk-p/media/blob/master/Снимок.PNG)
 
 ---
-Then you need to find NodeMcu in local network. You can do it using airrohr-flasher. Run it and go to Discovery and press Refresh, then you can see the address.
+Then you need to find NodeMcu in local network. You can do it using airrohr-flasher. Run it and go to Discovery and press Refresh, then you'll be able to see the address.
 
 ![addr](https://github.com/LoSk-p/media/blob/master/flaser2.PNG)
 
