@@ -9,7 +9,7 @@
 ## Assembly
 ### Connection diagram
 
-![scheme](https://github.com/LoSk-p/media/blob/master/photo_2020-10-28_16-54-00.jpg)
+![scheme](https://github.com/LoSk-p/media/blob/master/photo_2020-10-28_17-21-11.jpg)
 
 ### Connecting SDS011
 
