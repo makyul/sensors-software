@@ -110,6 +110,8 @@ Then enable GPS and all sensors that you use and write your coordinates:
 
 ![gps](https://github.com/LoSk-p/media/blob/master/esp/gps.jpg)
 
+Then press "Save configuration and restart".
+
 ---
 
 ## Results
