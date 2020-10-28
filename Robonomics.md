@@ -20,7 +20,7 @@
 * Pin 5 (5V) -> VU
 * Pin 6 (1m) -> unused
 
-Sensor's sold complete with USB adapter and connection wires. You don't need USB adapter, so disconnect wires from it.
+Sensor is sold with USB adapter and connection wires. You don't need USB adapter, so disconnect wires from it.
 
 ![disconnect](https://github.com/LoSk-p/media/blob/master/assembly_usb.PNG)
 
@@ -28,14 +28,13 @@ You may connect it to ESP via connecting wires "Female-Male":
 
 ![f-m](https://github.com/LoSk-p/media/blob/master/conn.PNG)
 
-And connect them to your ESP according connection diagram.
+And connect them to your ESP according to the connection diagram.
 
 Or you can use wires from USB adapter. Disconnect one wire: push on it with some sharp object and carefully pull the wire:
-Insert it to extreme connector:
 
 ![extreme_con](https://github.com/LoSk-p/media/blob/master/assembly_wires.PNG)
 
-Insert it to extreme connector:
+Insert it to last connector:
 
 ![extr](https://github.com/LoSk-p/media/blob/master/wires1.PNG)
 
@@ -43,7 +42,7 @@ Then cut connector in the middle:
 
 ![cut](https://github.com/LoSk-p/media/blob/master/assembly_wires2.PNG)
 
-And connect them to ESP accoding to connection diagram:
+And connect them to ESP accoding to the connection diagram:
 
 ![esp_con](https://github.com/LoSk-p/media/blob/master/esp_con.PNG)
 
@@ -63,14 +62,14 @@ And connect them to ESP accoding to connection diagram:
 
 ---
 ## Device firmware
-Download airrohr-flasher for your OS from [here](https://github.com/airalab/sensors-connectivity/releases/tag/v0.4).
+Download `airrohr-flasher` for your OS from [here](https://github.com/airalab/sensors-connectivity/releases/tag/v0.4).
 Connect ESP to computer via micro-USB and run flasher. 
 
 For Linux firstly you need to get permission to USB port:
 ```bash
 sudo usermod -a -G dialout $USER
 ```
-After that you need to restart computer.
+Then restart computer.
 
 Now you can run flasher (don't forget to give it permission to execute):
 ```bash
@@ -97,13 +96,13 @@ Then press "Save configuration and restart" and ESP will connect to your wi-fi.
 ![save](https://github.com/LoSk-p/media/blob/master/Снимок.PNG)
 
 ---
-Then you need to find NodeMcu in local network (for that your computer and ESP must be in one network). You can do it using airrohr-flasher. Run it and go to Discovery and press Refresh, then you'll be able to see the address.
+Then you need to find ESP in local network (for that your computer and ESP must be in one network). You can do it using airrohr-flasher. Run it and go to Discovery and press Refresh, then you'll be able to see the address.
 
 ![addr](https://github.com/LoSk-p/media/blob/master/flaser2.PNG)
 
 ---
 
-Write in your browser it's local address, go to Configuration and tick 'API Robonomics'. 
+Write in your browser ESP local address, go to Configuration and tick 'API Robonomics'. 
 
 ![robonomics](https://github.com/LoSk-p/media/blob/master/esp/APIrobonomics.jpg)
 
