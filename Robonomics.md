@@ -2,52 +2,75 @@
 ## Requiremets
 * ESP8266 Node MCU v3
 * particle sensor SDS011
+* temperature and humidity sensor BME280 or DHT22 (optional)
 * micro USB cable
 * connecting wires
 ---
-## Installation
-### For Linux:
-Install required packages:
-```bash
-sudo apt update
-sudo apt install python3-pip
-sudo apt install git
-sudo apt install nmap
-```
-Install platformio:
-```bash
-pip3 install -U platformio
-```
-To get access to USB port you need to add user to dialout group:
-```bash
-sudo usermod -a -G dialout username
-```
-Where "username" is your username.
+## Assembly
+### Connection diagram
 
-Then you need to restart computer.
+![scheme](https://github.com/LoSk-p/media/blob/master/scheme.PNG)
 
-Clone ropository with firmware:
-```bash
-git clone https://github.com/LoSk-p/sensors-software
-cd sensors-software/airrohr-firmware
-```
-Connect your ESP to computer via micro USB and upload firmware:
-```bash
-platformio run -e nodemcuv2_en -t upload
-```
-You can choose language changing "nodemcuv2_en".
+### Connecting SDS011
 
-In the end you will see
+* Pin 1 (TX) -> (RX) Pin D1 (GPIO5)
+* Pin 2 (RX) -> (TX) Pin D2 (GPIO4)
+* Pin 3 (GND) -> GND
+* Pin 4 (2.5m) -> unused
+* Pin 5 (5V) -> VU
+* Pin 6 (1m) -> unused
 
-![upload](https://github.com/LoSk-p/media/blob/master/esp/upload.jpg)
+Sensor's sold complete with USB adapter and connection wires. You don't need USB adapter, so disconnect wires from it.
+
+![disconnect](https://github.com/LoSk-p/media/blob/master/assembly_usb.PNG)
+
+You may connect it to ESP via connecting wires "Female-Male":
+
+![f-m](https://github.com/LoSk-p/media/blob/master/conn.PNG)
+
+And connect them to your ESP according connection diagram.
+
+Or you can use wires from USB adapter. Disconnect one wire: push on it with some sharp object and carefully pull the wire:
+Insert it to extreme connector:
+
+![extreme_con](https://github.com/LoSk-p/media/blob/master/assembly_wires.PNG)
+
+Insert it to extreme connector:
+
+![extr](https://github.com/LoSk-p/media/blob/master/wires1.PNG)
+
+Then cut connector in the middle:
+
+![cut](https://github.com/LoSk-p/media/blob/master/assembly_wires2.PNG)
+
+And connect them to ESP accoding to connection diagram:
+
+![esp_con](https://github.com/LoSk-p/media/blob/master/esp_con.PNG)
+
+### Connecting DHT22
+
+* Pin 1 => 3V3
+* Pin 2 => Pin D7 (GPIO13)
+* Pin 3 => unused
+* Pin 4 => GND
+
+### Connecting BME280
+
+* VCC -> Pin 3V3
+* GND -> Pin GND
+* SCL -> Pin D4 (GPIO2)
+* SDA -> Pin D3 (GPIO0)
 
 ---
-### For Windows:
-Download and unpack airrohr-flasher.rar from https://github.com/LoSk-p/airrohr-firmware-flasher/releases/tag/v4.
-
-Connect your ESP to computer via micro USB, then run airrohr-flasher.exe and click to Upload:
-
-![loader](https://github.com/LoSk-p/media/blob/master/loader.PNG)
+## Device firmware
+Download airrohr-flasher for your OS from [here](https://github.com/airalab/sensors-connectivity/releases/tag/v0.4).
+Connect ESP to computer via micro-USB and run flasher. 
+For Linux don't forget to give it permission to execute:
+```bash
+chmod +x airrohr-flasher-linux
+./airrohr-flasher-linux
+```
+Choose firmware (english or russian) and push upload. 
 
 ---
 ## Configuration
