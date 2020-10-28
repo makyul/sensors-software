@@ -9,7 +9,7 @@
 ## Assembly
 ### Connection diagram
 
-![scheme](https://github.com/LoSk-p/media/blob/master/scheme.PNG)
+![scheme](https://github.com/LoSk-p/media/blob/master/photo_2020-10-28_16-54-00.jpg)
 
 ### Connecting SDS011
 
@@ -68,7 +68,7 @@ Connect ESP to computer via micro-USB and run flasher.
 
 For Linux firstly you need to get permission to USB port:
 ```bash
-sudo usermod -G -a dialout $USER
+sudo usermod -a -G dialout $USER
 ```
 After that you need to restart computer.
 
