@@ -70,7 +70,9 @@ For Linux don't forget to give it permission to execute:
 chmod +x airrohr-flasher-linux
 ./airrohr-flasher-linux
 ```
-Choose firmware (english or russian) and push upload. 
+Choose firmware (english or russian) and press upload. It will take a few minutes.
+
+![flasher](https://github.com/LoSk-p/media/blob/master/flasher.PNG)
 
 ---
 ## Configuration
@@ -88,29 +90,9 @@ Then press "Save configuration and restart" and ESP will connect to your wi-fi.
 ![save](https://github.com/LoSk-p/media/blob/master/Снимок.PNG)
 
 ---
-Then you need to find NodeMcu in local network.
-### For Linux:
-Firstly find your address:
-```bash
-ip a
-```
+Then you need to find NodeMcu in local network. You can do it using airrohr-flasher. Run it and go to Discovery and press Refresh, then you can see the address.
 
-![ipa](https://github.com/LoSk-p/media/blob/master/esp/ipa.jpg)
-
-Then you can find NodeMcu with nmap (use your address with "0" in the end):
-```bash
-nmap -sn 192.168.100.0/24
-```
-
----
-### For Windows:
-Firstly find your address. In Settings - Network & Internet - Wi-Fi click to Hardware properties:
-
-![addr_win](https://github.com/LoSk-p/media/blob/master/addr.PNG)
-
-Then install Advanced IP Scanner from [here](https://www.advanced-ip-scanner.com/ru/). Open it and scan your network (write your address with 0 and 255 in the end)
-
-![ip_scan](https://github.com/LoSk-p/media/blob/master/ipscan.PNG)
+![addr](https://github.com/LoSk-p/media/blob/master/flaser2.PNG)
 
 ---
 
