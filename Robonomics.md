@@ -54,7 +54,7 @@ And connect them to ESP accoding to connection diagram:
 * Pin 3 => unused
 * Pin 4 => GND
 
-### Connecting BME280
+### Connecting BME280/HTU21D
 
 * VCC -> Pin 3V3
 * GND -> Pin GND
