@@ -2,7 +2,6 @@
 ## Requiremets
 * ESP8266 Node MCU v3
 * particle sensor SDS011
-* temperature and humidity sensor BME280 or DHT22 (optional)
 * micro USB cable
 * connecting wires
 ---
@@ -45,20 +44,6 @@ Then cut connector in the middle:
 And connect them to ESP accoding to the connection diagram:
 
 ![esp_con](https://github.com/LoSk-p/media/blob/master/esp_con.PNG)
-
-### Connecting DHT22
-
-* Pin 1 => 3V3
-* Pin 2 => Pin D7 (GPIO13)
-* Pin 3 => unused
-* Pin 4 => GND
-
-### Connecting BME280/HTU21D
-
-* VCC -> Pin 3V3
-* GND -> Pin GND
-* SCL -> Pin D4 (GPIO2)
-* SDA -> Pin D3 (GPIO0)
 
 ---
 ## Device firmware
