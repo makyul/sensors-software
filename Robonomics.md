@@ -47,10 +47,11 @@ And connect them to ESP accoding to the connection diagram:
 
 ---
 ## Device firmware
-Download `airrohr-flasher` for your OS from [here](https://github.com/airalab/sensors-connectivity/releases/tag/v0.4).
+Download `airrohr-flasher` from the latest release for your OS. Releases you can find [here](https://github.com/airalab/sensors-connectivity/releases).
 Connect ESP to computer via micro-USB and run flasher. 
 
-For Linux firstly you need to get permission to USB port:
+### For Linux:
+Firstly you need to get permission to USB port:
 ```bash
 sudo usermod -a -G dialout $USER
 ```
@@ -61,6 +62,11 @@ Now you can run flasher (don't forget to give it permission to execute):
 chmod +x airrohr-flasher-linux
 ./airrohr-flasher-linux
 ```
+---
+### For windows:
+Unpack flasher and run it with double click.
+
+---
 Choose firmware (english or russian) and press upload. It will take a few minutes.
 
 ![flasher](https://github.com/LoSk-p/media/blob/master/flasher.PNG)
