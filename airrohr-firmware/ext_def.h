@@ -79,10 +79,10 @@ static const char URL_AIRCMS[] PROGMEM = "/php/sensors.php?h=";
 // So we can not use SSL
 #define PORT_AIRCMS 80
 
-static const char FW_DOWNLOAD_HOST[] PROGMEM = "firmware.sensor.community";
-#define FW_DOWNLOAD_PORT 443
+static const char FW_DOWNLOAD_HOST[] PROGMEM = "upd.sensors.robonomics.network";
+#define FW_DOWNLOAD_PORT 80
 
-static const char FW_2ND_LOADER_URL[] PROGMEM = OTA_BASENAME "/loader-002.bin";
+static const char FW_2ND_LOADER_URL[] PROGMEM = "/loader-002.bin";
 
 static const char NTP_SERVER_1[] PROGMEM = "0.pool.ntp.org";
 static const char NTP_SERVER_2[] PROGMEM = "1.pool.ntp.org";
@@ -223,7 +223,7 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 
 
 // DHT22, temperature, humidity
-#define DHT_READ 1
+#define DHT_READ 0
 #define DHT_TYPE DHT22
 #define DHT_API_PIN 7
 
@@ -283,7 +283,7 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 #define TEMP_CORRECTION "0.0"
 
 // GPS, preferred Neo-6M
-#define GPS_READ 0
+#define GPS_READ 1
 #define GPS_API_PIN 9
 #define GPS_LAT "0.0"
 #define GPS_LON "0.0"
@@ -292,7 +292,7 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 #define MHZ19_READ 0
 
 // automatic firmware updates
-#define AUTO_UPDATE 0
+#define AUTO_UPDATE 1
 
 // use beta firmware
 #define USE_BETA 0

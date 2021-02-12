@@ -915,25 +915,8 @@ static String form_select_lang() {
 					"<td>" INTL_LANGUAGE ":&nbsp;</td>"
 					"<td>"
 					"<select id='current_lang' name='current_lang'>"
-					"<option value='BG'>Bulgarian (BG)</option>"
-					"<option value='CZ'>Český (CZ)</option>"
-					"<option value='DE'>Deutsch (DE)</option>"
-					"<option value='DK'>Dansk (DK)</option>"
 					"<option value='EN'>English (EN)</option>"
-					"<option value='ES'>Español (ES)</option>"
-					"<option value='FR'>Français (FR)</option>"
-					"<option value='IT'>Italiano (IT)</option>"
-					"<option value='LU'>Lëtzebuergesch (LU)</option>"
-					"<option value='NL'>Nederlands (NL)</option>"
-					"<option value='HU'>Magyar (HU)</option>"
-					"<option value='PL'>Polski (PL)</option>"
-					"<option value='PT'>Português (PT)</option>"
-					"<option value='RS'>Srpski (RS)</option>"
 					"<option value='RU'>Русский (RU)</option>"
-					"<option value='SK'>Slovenský (SK)</option>"
-					"<option value='SE'>Svenska (SE)</option>"
-					"<option value='TR'>Türkçe (TR)</option>"
-					"<option value='UA'>український (UA)</option>"
 					"</select>"
 					"</td>"
 					"</tr>");
@@ -1101,7 +1084,7 @@ static void webserver_config_send_body_get(String& page_content) {
 	page_content = FPSTR(WEB_BR_LF_B);
 	page_content += F(INTL_FIRMWARE "</b>&nbsp;");
 	add_form_checkbox(Config_auto_update, FPSTR(INTL_AUTO_UPDATE));
-	add_form_checkbox(Config_use_beta, FPSTR(INTL_USE_BETA));
+	//add_form_checkbox(Config_use_beta, FPSTR(INTL_USE_BETA));
 
 	page_content += FPSTR(TABLE_TAG_OPEN);
 	page_content += form_select_lang();
@@ -1171,7 +1154,7 @@ static void webserver_config_send_body_get(String& page_content) {
 	page_content += FPSTR(WEB_NBSP_NBSP_BRACE);
 	page_content += form_checkbox(Config_ssl_madavi, FPSTR(WEB_HTTPS), false);
 	page_content += FPSTR(WEB_BRACE_BR);
-	page_content += form_checkbox(Config_send2robonomics, F("API Robonomics"), false);
+	page_content += form_checkbox(Config_send2robonomics, FPSTR(WEB_ROBONOMICS), false);
 	page_content += FPSTR(WEB_BRACE_BRE);
 	
 	add_form_checkbox(Config_send2csv, FPSTR(WEB_CSV));
@@ -3360,7 +3343,7 @@ static __noinline void fetchSensorGPS(String& s) {
  * OTAUpdate                                                     *
  *****************************************************************/
 
-static bool fwDownloadStream(WiFiClientSecure& client, const String& url, Stream* ostream) {
+static bool fwDownloadStream(WiFiClient& client, const String& url, Stream* ostream) {
 
 	HTTPClient http;
 	int bytes_written = -1;
@@ -3404,7 +3387,7 @@ static bool fwDownloadStream(WiFiClientSecure& client, const String& url, Stream
 	return false;
 }
 
-static bool fwDownloadStreamFile(WiFiClientSecure& client, const String& url, const String& fname) {
+static bool fwDownloadStreamFile(WiFiClient& client, const String& url, const String& fname) {
 
 	String fname_new(fname);
 	fname_new += F(".new");
@@ -3444,26 +3427,29 @@ static void twoStageOTAUpdate() {
 	}
 	lang_variant.toLowerCase();
 
-	String fetch_name(F(OTA_BASENAME "/update/latest_"));
+	String fetch_name(F("/latest_"));
 	if (cfg::use_beta) {
 		fetch_name = F(OTA_BASENAME "/beta/latest_");
 	}
 	fetch_name += lang_variant;
 	fetch_name += F(".bin");
 
-	WiFiClientSecure client;
-	BearSSL::Session clientSession;
+	WiFiClient client;
+	//BearSSL::Session clientSession;
 
-	client.setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
-	client.setSession(&clientSession);
-	configureCACertTrustAnchor(&client);
+	//client.setBufferSizes(1024, TCP_MSS > 1024 ? 2048 : 1024);
+	//client.setSession(&clientSession);
+	//configureCACertTrustAnchor(&client);
 
 	String fetch_md5_name(fetch_name);
 	fetch_md5_name += F(".md5");
+	debug_outln_info(F("download md5 begin"));
 
 	StreamString newFwmd5;
-	if (!fwDownloadStream(client, fetch_md5_name, &newFwmd5))
-		return;
+	if (!fwDownloadStream(client, fetch_md5_name, &newFwmd5)){
+		debug_outln_info(F("download md5 fail"));
+		return;}
+	debug_outln_info(F("download md5 end"));
 
 	newFwmd5.trim();
 	if (newFwmd5 == ESP.getSketchMD5()) {
