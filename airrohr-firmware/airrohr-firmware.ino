@@ -96,8 +96,8 @@ String SOFTWARE_VERSION(SOFTWARE_VERSION_STR);
 
 // includes common to ESP8266 and ESP32 (especially external libraries)
 #include "./oledfont.h"				// avoids including the default Arial font, needs to be included before SSD1306.h
-#include <SSD1306.h>
 #include <SH1106.h>
+#include <SSD1306.h>
 #include <LiquidCrystal_I2C.h>
 #define ARDUINOJSON_ENABLE_ARDUINO_STREAM 0
 #define ARDUINOJSON_ENABLE_ARDUINO_PRINT 0
