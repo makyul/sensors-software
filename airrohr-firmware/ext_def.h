@@ -243,6 +243,10 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 #define PMS_READ 0
 #define PMS_API_PIN 1
 
+// CCS811 
+#define CCS811_READ 0
+#define CCS811_27_READ 0
+
 // Honeywell PM sensor
 #define HPM_READ 0
 #define HPM_API_PIN 1

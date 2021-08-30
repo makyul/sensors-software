@@ -24,6 +24,7 @@ const char DBG_TXT_NOT_FOUND[] PROGMEM = " ... not found";
 const char DBG_TXT_SEP[] PROGMEM = "----";
 
 const char SENSORS_SDS011[] PROGMEM = "SDS011";
+const char SENSORS_CCS811[] PROGMEM = "CCS811";
 const char SENSORS_PPD42NS[] PROGMEM = "PPD42NS";
 const char SENSORS_PMSx003[] PROGMEM = "PMSx003";
 const char SENSORS_HPM[] PROGMEM = "Honeywell PM";
@@ -146,6 +147,8 @@ const char WEB_REPLN_REPLV[] PROGMEM = "\"{n}\":\"{v}\",";
 const char WEB_PM1[] PROGMEM = "PM1";
 const char WEB_PM25[] PROGMEM = "PM2.5";
 const char WEB_PM10[] PROGMEM = "PM10";
+const char WEB_CO2[] PROGMEM = "eCO2";
+const char WEB_TVOC[] PROGMEM = "eTVOC";
 const char WEB_PM4[] PROGMEM = "PM4";
 const char WEB_NC0k5[] PROGMEM = "NC0.5";
 const char WEB_NC1k0[] PROGMEM = "NC1.0";

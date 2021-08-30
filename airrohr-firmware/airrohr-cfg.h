@@ -37,6 +37,8 @@ enum ConfigShapeId {
 	Config_htu21d_read,
 	Config_ppd_read,
 	Config_sds_read,
+	Config_ccs811_read,
+	Config_ccs811_27_read,
 	Config_pms_read,
 	Config_hpm_read,
 	Config_npm_read,
@@ -103,6 +105,8 @@ static constexpr char CFG_KEY_DHT_READ[] PROGMEM = "dht_read";
 static constexpr char CFG_KEY_HTU21D_READ[] PROGMEM = "htu21d_read";
 static constexpr char CFG_KEY_PPD_READ[] PROGMEM = "ppd_read";
 static constexpr char CFG_KEY_SDS_READ[] PROGMEM = "sds_read";
+static constexpr char CFG_KEY_CCS811_READ[] PROGMEM = "ccs811_read";
+static constexpr char CFG_KEY_CCS811_27_READ[] PROGMEM = "ccs811_27_read";
 static constexpr char CFG_KEY_PMS_READ[] PROGMEM = "pms_read";
 static constexpr char CFG_KEY_HPM_READ[] PROGMEM = "hpm_read";
 static constexpr char CFG_KEY_NPM_READ[] PROGMEM = "npm_read";
@@ -169,6 +173,8 @@ static constexpr ConfigShapeEntry configShape[] PROGMEM = {
 	{ Config_Type_Bool, 0, CFG_KEY_HTU21D_READ, &cfg::htu21d_read },
 	{ Config_Type_Bool, 0, CFG_KEY_PPD_READ, &cfg::ppd_read },
 	{ Config_Type_Bool, 0, CFG_KEY_SDS_READ, &cfg::sds_read },
+	{ Config_Type_Bool, 0, CFG_KEY_CCS811_READ, &cfg::ccs811_read },
+	{ Config_Type_Bool, 0, CFG_KEY_CCS811_27_READ, &cfg::ccs811_27_read },
 	{ Config_Type_Bool, 0, CFG_KEY_PMS_READ, &cfg::pms_read },
 	{ Config_Type_Bool, 0, CFG_KEY_HPM_READ, &cfg::hpm_read },
 	{ Config_Type_Bool, 0, CFG_KEY_NPM_READ, &cfg::npm_read },

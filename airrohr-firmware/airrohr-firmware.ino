@@ -121,6 +121,7 @@ String SOFTWARE_VERSION(SOFTWARE_VERSION_STR);
 #include "defines.h"
 #include "ext_def.h"
 #include "html-content.h"
+#include "SparkFunCCS811.h"
 
 
 /******************************************************************
@@ -158,6 +159,8 @@ namespace cfg {
 	bool htu21d_read = HTU21D_READ;
 	bool ppd_read = PPD_READ;
 	bool sds_read = SDS_READ;
+	bool ccs811_27_read = CCS811_27_READ;
+	bool ccs811_read = CCS811_READ;
 	bool pms_read = PMS_READ;
 	bool hpm_read = HPM_READ;
 	bool npm_read = NPM_READ;
@@ -324,6 +327,16 @@ DallasTemperature ds18b20(&oneWire);
 TinyGPSPlus gps;
 
 /*****************************************************************
+ * CCS811 declaration                                               *
+ *****************************************************************/
+
+#define CCS811_ADDR 0x3F //Default I2C Address
+#define CCS811_27_ADDR 0x27 //Alternate I2C Address
+
+CCS811 ccs811(CCS811_ADDR);
+CCS811 ccs811_27(CCS811_27_ADDR);
+
+/*****************************************************************
  * Variable Definitions for PPD24NS                              *
  * P1 for PM10 & P2 for PM25                                     *
  *****************************************************************/
@@ -452,10 +465,14 @@ unsigned long SPS30_read_error_counter = 0;
 unsigned long SPS30_read_timer = 0;
 bool sps30_init_failed = false;
 
+bool ccs811_init_failed = false;
+
 float last_value_PPD_P1 = -1.0;
 float last_value_PPD_P2 = -1.0;
 float last_value_SDS_P1 = -1.0;
 float last_value_SDS_P2 = -1.0;
+float last_value_CCS811_CO2 = -1.0;
+float last_value_CCS811_TVOC = -1.0;
 float last_value_PMS_P0 = -1.0;
 float last_value_PMS_P1 = -1.0;
 float last_value_PMS_P2 = -1.0;
@@ -544,6 +561,30 @@ static void display_debug(const String& text1, const String& text2) {
 		lcd_2004->print(text1);
 		lcd_2004->setCursor(0, 1);
 		lcd_2004->print(text2);
+	}
+}
+
+/*****************************************************************
+ * init CCS811 sensor                                            *
+ *****************************************************************/
+
+static void initSensorCCS811() {
+	Wire.begin();
+	if (cfg::ccs811_read) {
+		debug_outln_info(F("Trying CCS811 on 0x3F"));
+		if (ccs811.begin() == false) {
+			ccs811_init_failed = true;
+			debug_outln_error(F("CCS811 error starting measurement"));
+			return;
+		}
+	}
+	if (cfg::ccs811_27_read) {
+		debug_outln_info(F("Trying CCS811 on 0x27"));
+		if (ccs811_27.begin() == false) {
+			ccs811_init_failed = true;
+			debug_outln_error(F("CCS811 error starting measurement"));
+			return;
+		}
 	}
 }
 
@@ -1110,6 +1151,9 @@ static void webserver_config_send_body_get(String& page_content) {
 	add_form_checkbox_sensor(Config_hpm_read, FPSTR(INTL_HPM));
 	add_form_checkbox_sensor(Config_sps30_read, FPSTR(INTL_SPS30));
 
+	add_form_checkbox(Config_ccs811_27_read, FPSTR(INTL_CCS811_27));
+	add_form_checkbox(Config_ccs811_read, FPSTR(INTL_CCS811_3F));
+
 	// Paginate page after ~ 1500 Bytes
 	server.sendContent(page_content);
 	page_content = emptyString;
@@ -1430,6 +1474,16 @@ static void webserver_values() {
 	if (cfg::sds_read) {
 		add_table_pm_value(FPSTR(SENSORS_SDS011), FPSTR(WEB_PM25), last_value_SDS_P2);
 		add_table_pm_value(FPSTR(SENSORS_SDS011), FPSTR(WEB_PM10), last_value_SDS_P1);
+		page_content += FPSTR(EMPTY_ROW);
+	}
+	if (cfg::ccs811_read) {
+		add_table_pm_value(FPSTR(SENSORS_CCS811), FPSTR(WEB_CO2), last_value_CCS811_CO2);
+		add_table_pm_value(FPSTR(SENSORS_CCS811), FPSTR(WEB_TVOC), last_value_CCS811_TVOC);
+		page_content += FPSTR(EMPTY_ROW);
+	}
+	if (cfg::ccs811_27_read) {
+		add_table_pm_value(FPSTR(SENSORS_CCS811), FPSTR(WEB_CO2), last_value_CCS811_CO2);
+		add_table_pm_value(FPSTR(SENSORS_CCS811), FPSTR(WEB_TVOC), last_value_CCS811_TVOC);
 		page_content += FPSTR(EMPTY_ROW);
 	}
 	if (cfg::pms_read) {
@@ -2014,6 +2068,8 @@ static void wifiConfig() {
 	debug_outln_info_bool(F("HTU21D: "), cfg::htu21d_read);
 	debug_outln_info_bool(F("BMP: "), cfg::bmp_read);
 	debug_outln_info_bool(F("DNMS: "), cfg::dnms_read);
+	debug_outln_info_bool(F("CCS811: "), cfg::ccs811_read);
+	debug_outln_info_bool(F("CCS811_27: "), cfg::ccs811_27_read);
 	debug_outln_info(FPSTR(DBG_TXT_SEP));
 	debug_outln_info_bool(F("SensorCommunity: "), cfg::send2dusti);
 	debug_outln_info_bool(F("Madavi: "), cfg::send2madavi);
@@ -2467,6 +2523,35 @@ static void fetchSensorDS18B20(String& s) {
 	}
 	debug_outln_info(FPSTR(DBG_TXT_SEP));
 	debug_outln_verbose(FPSTR(DBG_TXT_END_READING), FPSTR(SENSORS_DS18B20));
+}
+
+/*****************************************************************
+ * read CCS811 sensor values                                     *
+ *****************************************************************/
+static void fetchSensorCCS811(String& s) {
+	if (cfg::ccs811_read) {
+		if (ccs811.dataAvailable()){
+			ccs811.readAlgorithmResults();
+			last_value_CCS811_CO2 = ccs811.getCO2();
+			last_value_CCS811_TVOC = ccs811.getTVOC();
+			debug_outln_verbose(F("CCS811 CO2 : "), String(last_value_CCS811_CO2));
+			debug_outln_verbose(F("CCS811 TVOC : "), String(last_value_CCS811_TVOC));
+		}
+	}
+	if (cfg::ccs811_27_read) {
+		if (ccs811_27.dataAvailable()){
+			ccs811_27.readAlgorithmResults();
+			last_value_CCS811_CO2 = ccs811_27.getCO2();
+			last_value_CCS811_TVOC = ccs811_27.getTVOC();
+			debug_outln_verbose(F("CCS811 CO2 : "), String(last_value_CCS811_CO2));
+			debug_outln_verbose(F("CCS811 TVOC : "), String(last_value_CCS811_TVOC));
+		}
+	}
+	if (send_now) {
+		add_Value2Json(s, F("CCS_CO2"), F("CO2:  "), last_value_CCS811_CO2);
+		add_Value2Json(s, F("CCS_TVOC"), F("TVOC: "), last_value_CCS811_TVOC);
+		debug_outln_info(FPSTR(DBG_TXT_SEP));
+	}
 }
 
 /*****************************************************************
@@ -4042,6 +4127,11 @@ static void powerOnTestSensors() {
 		initSPS30();
 	}
 
+	if ((cfg::ccs811_read) || (cfg::ccs811_27_read)) {
+		debug_outln_info(F("Read CCS811..."));
+		initSensorCCS811();
+	}
+
 	if (cfg::dht_read) {
 		dht.begin();										// Start DHT
 		debug_outln_info(F("Read DHT..."));
@@ -4326,13 +4416,17 @@ void setup(void) {
 	starttime = millis();									// store the start time
 	last_update_attempt = time_point_device_start_ms = starttime;
 	last_display_millis = starttime_SDS = starttime;
+
+	// long rand;
+	// rand = random(3);
+	// debug_outln_info(F("Random: "), String(rand));
 }
 
 /*****************************************************************
  * And action                                                    *
  *****************************************************************/
 void loop(void) {
-	String result_PPD, result_SDS, result_PMS, result_HPM;
+	String result_PPD, result_SDS, result_PMS, result_HPM, result_CCS;
 	String result_GPS, result_DNMS;
 
 
@@ -4399,6 +4493,10 @@ void loop(void) {
 			fetchSensorSDS(result_SDS);
 		}
 
+		if ((cfg::ccs811_read) || (cfg::ccs811_27_read)) {
+			fetchSensorCCS811(result_CCS);
+		}
+
 		if (cfg::pms_read) {
 			fetchSensorPMS(result_PMS);
 		}
@@ -4445,6 +4543,9 @@ void loop(void) {
 		if (cfg::sds_read) {
 			data += result_SDS;
 			sum_send_time += sendSensorCommunity(result_SDS, SDS_API_PIN, FPSTR(SENSORS_SDS011), "SDS_");
+		}
+		if (((cfg::ccs811_read) || (cfg::ccs811_27_read)) && (! ccs811_init_failed)) {
+			data += result_CCS;
 		}
 		if (cfg::pms_read) {
 			data += result_PMS;
