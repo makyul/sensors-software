@@ -330,8 +330,8 @@ TinyGPSPlus gps;
  * CCS811 declaration                                               *
  *****************************************************************/
 
-#define CCS811_ADDR 0x3F //Default I2C Address
-#define CCS811_27_ADDR 0x27 //Alternate I2C Address
+#define CCS811_ADDR 0x5A //Default I2C Address
+#define CCS811_27_ADDR 0x5B //Alternate I2C Address
 
 CCS811 ccs811(CCS811_ADDR);
 CCS811 ccs811_27(CCS811_27_ADDR);
@@ -571,7 +571,7 @@ static void display_debug(const String& text1, const String& text2) {
 static void initSensorCCS811() {
 	Wire.begin();
 	if (cfg::ccs811_read) {
-		debug_outln_info(F("Trying CCS811 on 0x3F"));
+		debug_outln_info(F("Trying CCS811 on 0x5A"));
 		if (ccs811.begin() == false) {
 			ccs811_init_failed = true;
 			debug_outln_error(F("CCS811 error starting measurement"));
@@ -579,7 +579,7 @@ static void initSensorCCS811() {
 		}
 	}
 	if (cfg::ccs811_27_read) {
-		debug_outln_info(F("Trying CCS811 on 0x27"));
+		debug_outln_info(F("Trying CCS811 on 0x5B"));
 		if (ccs811_27.begin() == false) {
 			ccs811_init_failed = true;
 			debug_outln_error(F("CCS811 error starting measurement"));
