@@ -264,6 +264,11 @@ WebServer server(80);
 #include "./airrohr-cfg.h"
 
 /*****************************************************************
+ * Variables for Robonomics                                      *
+ *****************************************************************/
+int num_of_robonomics_API = 0;
+
+/*****************************************************************
  * Variables for Noise Measurement DNMS                          *
  *****************************************************************/
 float last_value_dnms_laeq = -1.0;
@@ -833,7 +838,7 @@ static void createLoggerConfigs() {
 		loggerConfigs[LoggerMadavi].destport = 443;
 		loggerConfigs[LoggerMadavi].session = new_session();
 	}
-	loggerConfigs[LoggerRobonomics].destport = PORT_ROBONOMICS;
+	loggerConfigs[LoggerRobonomics].destport = PORT_ROBONOMICS[num_of_robonomics_API];
 
 	loggerConfigs[LoggerSensemap].destport = PORT_SENSEMAP;
 	loggerConfigs[LoggerSensemap].session = new_session();
@@ -4316,7 +4321,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		data_4_robonomics += "\", ";
 		data_4_robonomics += data_to_send;
 		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("robonomics: "));
-		sum_send_time += sendData(LoggerRobonomics, data_4_robonomics, 0, HOST_ROBONOMICS, URL_ROBONOMICS);
+		sum_send_time += sendData(LoggerRobonomics, data_4_robonomics, 0, HOST_ROBONOMICS[num_of_robonomics_API], URL_ROBONOMICS[num_of_robonomics_API]);
 	}
 
 	if (cfg::send2csv) {
@@ -4386,6 +4391,10 @@ void setup(void) {
 		SOFTWARE_VERSION += F("-STF");
 	}
 #endif
+	long rand;
+	rand = random(NUM_ROBONOMICS_HOSTS);
+	num_of_robonomics_API = rand;
+
 	init_config();
 	init_display();
 	setupNetworkTime();
@@ -4416,10 +4425,8 @@ void setup(void) {
 	starttime = millis();									// store the start time
 	last_update_attempt = time_point_device_start_ms = starttime;
 	last_display_millis = starttime_SDS = starttime;
+	debug_outln_info(F("Sending to "), FPSTR(HOST_ROBONOMICS[num_of_robonomics_API]));
 
-	// long rand;
-	// rand = random(3);
-	// debug_outln_info(F("Random: "), String(rand));
 }
 
 /*****************************************************************
