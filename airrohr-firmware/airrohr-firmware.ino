@@ -254,6 +254,7 @@ bool dnms_init_failed = false;
 bool gps_init_failed = false;
 bool airrohr_selftest_failed = false;
 
+
 #if defined(ESP8266)
 ESP8266WebServer server(80);
 #endif
@@ -838,7 +839,7 @@ static void createLoggerConfigs() {
 		loggerConfigs[LoggerMadavi].destport = 443;
 		loggerConfigs[LoggerMadavi].session = new_session();
 	}
-	loggerConfigs[LoggerRobonomics].destport = PORT_ROBONOMICS[num_of_robonomics_API];
+	loggerConfigs[LoggerRobonomics].destport = PORT_ROBONOMICS;
 
 	loggerConfigs[LoggerSensemap].destport = PORT_SENSEMAP;
 	loggerConfigs[LoggerSensemap].session = new_session();
@@ -2200,6 +2201,67 @@ static WiFiClient* getNewLoggerWiFiClient(const LoggerEntry logger) {
 		_client = new WiFiClient;
 	}
 	return _client;
+}
+
+/*****************************************************************
+ * choose server to send data                                    *
+ *****************************************************************/
+static int chooseRobonomicsServer(const LoggerEntry logger) {
+
+	int num_of_robonomics_host = 0;
+	int min_sensors = 255;
+	const __FlashStringHelper* contentType;
+	int result = 0;
+
+	for (int i = 0; i < NUM_ROBONOMICS_HOSTS; i++) {
+
+		String s_Host = HOST_ROBONOMICS[i];
+		String s_url = URL_ROBONOMICS[i];
+
+		switch (logger) {
+		case Loggeraircms:
+			contentType = FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN);
+			break;
+		case LoggerInflux:
+			contentType = FPSTR(TXT_CONTENT_TYPE_INFLUXDB);
+			break;
+		default:
+			contentType = FPSTR(TXT_CONTENT_TYPE_JSON);
+			break;
+		}
+		std::unique_ptr<WiFiClient> client(getNewLoggerWiFiClient(logger));
+
+		HTTPClient http;
+
+		if (http.begin(*client, s_Host, loggerConfigs[logger].destport, s_url, !!loggerConfigs[logger].session)) {
+			const char * headerKeys[] = {"sensors-count"} ;
+			const size_t numberOfHeaders = 1;
+			http.collectHeaders(headerKeys, numberOfHeaders);
+
+			result = http.GET();
+
+			if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
+				debug_outln_info(F("Succeeded GET request - "), s_Host);
+				String header = http.header("sensors-count");
+				const char *num_of_sensors = header.c_str();
+				int num = atoi(num_of_sensors);
+				if (num < min_sensors) {
+					min_sensors = num;
+					debug_outln_info(F("Amount of sensors - "), num_of_sensors);
+					num_of_robonomics_host = i;
+				}
+			} else if (result >= HTTP_CODE_BAD_REQUEST) {
+				debug_outln_info(F("Request failed with error: "), String(result));
+				debug_outln_info(F("Details:"), http.getString());
+			}
+			http.end();
+
+		} else {
+			debug_outln_info(F("Failed connecting to "), s_Host);
+		}
+	}
+	debug_outln_info(F("Min sensors host - "), HOST_ROBONOMICS[num_of_robonomics_host]);
+	return num_of_robonomics_host;
 }
 
 /*****************************************************************
@@ -4314,6 +4376,7 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 	}
 
 	if (cfg::send2robonomics) {
+		int num_of_host;
 		String data_to_send = data;
 		data_to_send.remove(0, 1);
 		String data_4_robonomics(F("{\"esp8266id\": \""));
@@ -4321,7 +4384,8 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		data_4_robonomics += "\", ";
 		data_4_robonomics += data_to_send;
 		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("robonomics: "));
-		sum_send_time += sendData(LoggerRobonomics, data_4_robonomics, 0, HOST_ROBONOMICS[num_of_robonomics_API], URL_ROBONOMICS[num_of_robonomics_API]);
+		num_of_host = chooseRobonomicsServer(LoggerRobonomics);
+		sum_send_time += sendData(LoggerRobonomics, data_4_robonomics, 0, HOST_ROBONOMICS[num_of_host], URL_ROBONOMICS[num_of_host]);
 	}
 
 	if (cfg::send2csv) {
@@ -4391,9 +4455,6 @@ void setup(void) {
 		SOFTWARE_VERSION += F("-STF");
 	}
 #endif
-	long rand;
-	rand = random(NUM_ROBONOMICS_HOSTS);
-	num_of_robonomics_API = rand;
 
 	init_config();
 	init_display();
@@ -4425,7 +4486,8 @@ void setup(void) {
 	starttime = millis();									// store the start time
 	last_update_attempt = time_point_device_start_ms = starttime;
 	last_display_millis = starttime_SDS = starttime;
-	debug_outln_info(F("Sending to "), FPSTR(HOST_ROBONOMICS[num_of_robonomics_API]));
+
+	// debug_outln_info(F("Sending to "), FPSTR(HOST_ROBONOMICS[num_of_robonomics_API]));
 
 }
 
