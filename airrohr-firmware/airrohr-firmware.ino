@@ -2245,9 +2245,9 @@ static int chooseRobonomicsServer(const LoggerEntry logger) {
 				String header = http.header("sensors-count");
 				const char *num_of_sensors = header.c_str();
 				int num = atoi(num_of_sensors);
+				debug_outln_info(F("Amount of sensors - "), num_of_sensors);
 				if (num < min_sensors) {
 					min_sensors = num;
-					debug_outln_info(F("Amount of sensors - "), num_of_sensors);
 					num_of_robonomics_host = i;
 				}
 			} else if (result >= HTTP_CODE_BAD_REQUEST) {
