@@ -95,10 +95,10 @@ static const char URL_CUSTOM[] PROGMEM = "";
 #define PWD_CUSTOM ""
 #define SSL_CUSTOM 0
 
-static const char HOST_ROBONOMICS[][40] PROGMEM = {"connectivity.robonomics.network", "1.connectivity.robonomics.network"};
-static const char URL_ROBONOMICS[][40] PROGMEM = {"", ""};
+static const char HOST_ROBONOMICS[][40] PROGMEM = {"connectivity.robonomics.network", "1.connectivity.robonomics.network", "2.connectivity.robonomics.network"};
+static const char URL_ROBONOMICS[][40] PROGMEM = {"", "", ""};
 #define PORT_ROBONOMICS 65
-#define NUM_ROBONOMICS_HOSTS 2
+#define NUM_ROBONOMICS_HOSTS 3
 
 // define own InfluxDB
 static const char HOST_INFLUX[] PROGMEM = "influx.server";
