@@ -136,7 +136,7 @@ String SOFTWARE_VERSION(SOFTWARE_VERSION_STR);
 namespace cfg {
 	unsigned debug = DEBUG;
 
-	unsigned time_for_wifi_config = 600000;
+	unsigned time_for_wifi_config = 15000;
 	unsigned sending_intervall_ms = 145000;
 
 	char current_lang[3];
@@ -159,6 +159,7 @@ namespace cfg {
 	bool htu21d_read = HTU21D_READ;
 	bool ppd_read = PPD_READ;
 	bool sds_read = SDS_READ;
+	bool gc_read = GC_READ;
 	bool ccs811_27_read = CCS811_27_READ;
 	bool ccs811_read = CCS811_READ;
 	bool pms_read = PMS_READ;
@@ -477,6 +478,7 @@ float last_value_PPD_P1 = -1.0;
 float last_value_PPD_P2 = -1.0;
 float last_value_SDS_P1 = -1.0;
 float last_value_SDS_P2 = -1.0;
+float last_value_gc = -1.0;
 float last_value_CCS811_CO2 = -1.0;
 float last_value_CCS811_TVOC = -1.0;
 float last_value_PMS_P0 = -1.0;
@@ -769,6 +771,17 @@ static void init_config() {
 		return;
 	}
 	readConfig();
+}
+
+static void writeDataFile(String data) {
+  File dataFile = SPIFFS.open(F("/data.json"), "a");
+  if (dataFile) {
+    dataFile.println(data);
+    dataFile.close();
+    debug_outln_info(F("Data written successfully."));
+  } else {
+    debug_outln_error(F("failed to open data file for writing"));
+  }
 }
 
 /*****************************************************************
@@ -1154,6 +1167,7 @@ static void webserver_config_send_body_get(String& page_content) {
 
 	page_content = tmpl(FPSTR(WEB_DIV_PANEL), String(3));
 	add_form_checkbox_sensor(Config_sds_read, FPSTR(INTL_SDS011));
+	add_form_checkbox_sensor(Config_gc_read, FPSTR(INTL_GC));
 	add_form_checkbox_sensor(Config_hpm_read, FPSTR(INTL_HPM));
 	add_form_checkbox_sensor(Config_sps30_read, FPSTR(INTL_SPS30));
 
@@ -1480,6 +1494,10 @@ static void webserver_values() {
 	if (cfg::sds_read) {
 		add_table_pm_value(FPSTR(SENSORS_SDS011), FPSTR(WEB_PM25), last_value_SDS_P2);
 		add_table_pm_value(FPSTR(SENSORS_SDS011), FPSTR(WEB_PM10), last_value_SDS_P1);
+		page_content += FPSTR(EMPTY_ROW);
+	}
+	if (cfg::gc_read) {
+		add_table_pm_value(FPSTR(SENSORS_GC), FPSTR(WEB_PM25), last_value_gc);
 		page_content += FPSTR(EMPTY_ROW);
 	}
 	if (cfg::ccs811_read) {
@@ -2066,6 +2084,7 @@ static void wifiConfig() {
 	debug_outln_info(FPSTR(DBG_TXT_SEP));
 	debug_outln_info_bool(F("PPD: "), cfg::ppd_read);
 	debug_outln_info_bool(F("SDS: "), cfg::sds_read);
+	debug_outln_info_bool(F("GC: "), cfg::gc_read);
 	debug_outln_info_bool(F("PMS: "), cfg::pms_read);
 	debug_outln_info_bool(F("HPM: "), cfg::hpm_read);
 	debug_outln_info_bool(F("SPS30: "), cfg::sps30_read);
@@ -2206,63 +2225,7 @@ static WiFiClient* getNewLoggerWiFiClient(const LoggerEntry logger) {
 /*****************************************************************
  * choose server to send data                                    *
  *****************************************************************/
-static int chooseRobonomicsServer(const LoggerEntry logger) {
 
-	int num_of_robonomics_host = 0;
-	int min_sensors = 255;
-	const __FlashStringHelper* contentType;
-	int result = 0;
-
-	for (int i = 0; i < NUM_ROBONOMICS_HOSTS; i++) {
-
-		String s_Host = HOST_ROBONOMICS[i];
-		String s_url = URL_ROBONOMICS[i];
-
-		switch (logger) {
-		case Loggeraircms:
-			contentType = FPSTR(TXT_CONTENT_TYPE_TEXT_PLAIN);
-			break;
-		case LoggerInflux:
-			contentType = FPSTR(TXT_CONTENT_TYPE_INFLUXDB);
-			break;
-		default:
-			contentType = FPSTR(TXT_CONTENT_TYPE_JSON);
-			break;
-		}
-		std::unique_ptr<WiFiClient> client(getNewLoggerWiFiClient(logger));
-
-		HTTPClient http;
-
-		if (http.begin(*client, s_Host, loggerConfigs[logger].destport, s_url, !!loggerConfigs[logger].session)) {
-			const char * headerKeys[] = {"sensors-count"} ;
-			const size_t numberOfHeaders = 1;
-			http.collectHeaders(headerKeys, numberOfHeaders);
-
-			result = http.GET();
-
-			if (result >= HTTP_CODE_OK && result <= HTTP_CODE_ALREADY_REPORTED) {
-				debug_outln_info(F("Succeeded GET request - "), s_Host);
-				String header = http.header("sensors-count");
-				const char *num_of_sensors = header.c_str();
-				int num = atoi(num_of_sensors);
-				debug_outln_info(F("Amount of sensors - "), num_of_sensors);
-				if (num < min_sensors) {
-					min_sensors = num;
-					num_of_robonomics_host = i;
-				}
-			} else if (result >= HTTP_CODE_BAD_REQUEST) {
-				debug_outln_info(F("Request failed with error: "), String(result));
-				debug_outln_info(F("Details:"), http.getString());
-			}
-			http.end();
-
-		} else {
-			debug_outln_info(F("Failed connecting to "), s_Host);
-		}
-	}
-	debug_outln_info(F("Min sensors host - "), HOST_ROBONOMICS[num_of_robonomics_host]);
-	return num_of_robonomics_host;
-}
 
 /*****************************************************************
  * send data to rest api                                         *
@@ -2702,6 +2665,61 @@ static void fetchSensorSDS(String& s) {
 		}
 	}
 }
+
+/*****************************************************************
+ * read Cajoe Geiger Counter sensor values                                     *
+ *****************************************************************/
+
+static volatile unsigned long counts = 0;
+
+static int secondcounts[60];
+static unsigned long int secidx_prev = 0;
+static unsigned long int count_prev = 0;
+static unsigned long int second_prev = 0;
+
+ICACHE_RAM_ATTR static void tube_impulse(void)
+{
+    counts++;
+}
+
+static void init_GS() {
+	pinMode(PIN_TICK, INPUT);
+    attachInterrupt(digitalPinToInterrupt(PIN_TICK), tube_impulse, FALLING);
+}
+
+static void sensorUpdateGC() {
+
+	unsigned long int second = millis() / 1000;
+    unsigned long int secidx = second % 60;
+
+	if (secidx != secidx_prev) {
+        // new second, store the counts from the last second
+        unsigned long int count = counts;
+        secondcounts[secidx_prev] = count - count_prev;
+        count_prev = count;
+        secidx_prev = secidx;
+    }
+}
+static void fetchSensorGC(String& s) {
+
+	int last_value_gc = 0;
+
+        // calculate sum
+        
+        for (int i = 0; i < 60; i++) {
+            last_value_gc += secondcounts[i];
+        }
+		String values = "GC " + String(last_value_gc);
+    	writeDataFile(values);
+
+        //Debug.println(String(last_value_gc));
+
+	
+		add_Value2Json(s, F("GC"), String(last_value_gc));
+		debug_outln_info(F("GC "), last_value_gc);
+	}
+
+
 
 /*****************************************************************
  * read Plantronic PM sensor sensor values                       *
@@ -4100,6 +4118,12 @@ static void initDNMS() {
 }
 
 static void powerOnTestSensors() {
+
+	if (cfg::gc_read) {
+		init_GS();
+	}
+	
+
 	if (cfg::ppd_read) {
 		pinMode(PPD_PIN_PM1, INPUT_PULLUP);					// Listen at the designated PIN
 		pinMode(PPD_PIN_PM2, INPUT_PULLUP);					// Listen at the designated PIN
@@ -4133,6 +4157,8 @@ static void powerOnTestSensors() {
 		debug_outln_info(F("Stopping HPM..."));
 		is_HPM_running = HPM_cmd(PmSensorCmd::Stop);
 	}
+	 
+
 #if NPM_READ
 	if (cfg::npm_read) {
 
@@ -4384,8 +4410,8 @@ static unsigned long sendDataToOptionalApis(const String &data) {
 		data_4_robonomics += "\", ";
 		data_4_robonomics += data_to_send;
 		debug_outln_info(FPSTR(DBG_TXT_SENDING_TO), F("robonomics: "));
-		num_of_host = chooseRobonomicsServer(LoggerRobonomics);
-		sum_send_time += sendData(LoggerRobonomics, data_4_robonomics, 0, HOST_ROBONOMICS[num_of_host], URL_ROBONOMICS[num_of_host]);
+		// num_of_host = chooseRobonomicsServer(LoggerRobonomics);
+		sum_send_time += sendData(LoggerRobonomics, data_4_robonomics, 0, HOST_ROBONOMICS, URL_ROBONOMICS);
 	}
 
 	if (cfg::send2csv) {
@@ -4488,7 +4514,7 @@ void setup(void) {
 	last_display_millis = starttime_SDS = starttime;
 
 	// debug_outln_info(F("Sending to "), FPSTR(HOST_ROBONOMICS[num_of_robonomics_API]));
-
+	writeDataFile("Start measuring");
 }
 
 /*****************************************************************
@@ -4496,8 +4522,10 @@ void setup(void) {
  *****************************************************************/
 void loop(void) {
 	String result_PPD, result_SDS, result_PMS, result_HPM, result_CCS;
-	String result_GPS, result_DNMS;
+	String result_GPS, result_DNMS, result_GC;
 
+    // update gc sensor
+	sensorUpdateGC();
 
 	unsigned sum_send_time = 0;
 
@@ -4519,6 +4547,8 @@ void loop(void) {
 		UPDATE_MIN_MAX(min_micro, max_micro, diff_micro);
 	}
 	last_micro = act_micro;
+
+
 
 	if (cfg::sps30_read && ( !sps30_init_failed)) {
 		if ((msSince(starttime) - SPS30_read_timer) > SPS30_WAITING_AFTER_LAST_READ) {
@@ -4613,6 +4643,10 @@ void loop(void) {
 			data += result_SDS;
 			sum_send_time += sendSensorCommunity(result_SDS, SDS_API_PIN, FPSTR(SENSORS_SDS011), "SDS_");
 		}
+		if (cfg::gc_read) {
+			fetchSensorGC(result_GC);
+			data += result_GC;
+		}
 		if (((cfg::ccs811_read) || (cfg::ccs811_27_read)) && (! ccs811_init_failed)) {
 			data += result_CCS;
 		}
@@ -4688,6 +4722,22 @@ void loop(void) {
 			sum_send_time += sendSensorCommunity(result_GPS, GPS_API_PIN, F("GPS"), "GPS_");
 			result = emptyString;
 		}
+
+		//************************
+		File f1 = SPIFFS.open(F("/data.json"), "r");
+		debug_outln_info(F("Reading Data from File:"), String(f1.size()));
+		//Data from file
+		int i;
+		char st;
+		for(i=0;i<f1.size();i++) //Read upto complete file size
+		{
+		st = char(f1.read());
+		Debug.print(st);
+		}
+		f1.close();  //Close file
+		debug_outln_info(F("File Closed"));
+		//******
+
 		add_Value2Json(data, F("samples"), String(sample_count));
 		add_Value2Json(data, F("min_micro"), String(min_micro));
 		add_Value2Json(data, F("max_micro"), String(max_micro));

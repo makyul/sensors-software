@@ -19,7 +19,7 @@ const char WWW_PASSWORD[] PROGMEM = "";
 #define SSL_SENSORCOMMUNITY 0
 #define SEND2MADAVI 1
 #define SSL_MADAVI 0
-#define SEND2ROBONOMICS 1
+#define SEND2ROBONOMICS 0
 #define SSL_ROBONOMICS 0
 #define SEND2SENSEMAP 0
 #define SEND2FSAPP 0
@@ -95,8 +95,8 @@ static const char URL_CUSTOM[] PROGMEM = "";
 #define PWD_CUSTOM ""
 #define SSL_CUSTOM 0
 
-static const char HOST_ROBONOMICS[][40] PROGMEM = {"connectivity.robonomics.network", "1.connectivity.robonomics.network", "2.connectivity.robonomics.network"};
-static const char URL_ROBONOMICS[][40] PROGMEM = {"", "", ""};
+static const char HOST_ROBONOMICS[] PROGMEM = "connectivity.robonomics.network";
+static const char URL_ROBONOMICS[] PROGMEM = "";
 #define PORT_ROBONOMICS 65
 #define NUM_ROBONOMICS_HOSTS 3
 
@@ -129,6 +129,10 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 // define serial interface pins for GPS modules
 #define GPS_SERIAL_RX D5
 #define GPS_SERIAL_TX D6
+
+// define serial pin for geiger counter
+#define PIN_TICK    D2
+#define LOG_PERIOD 10
 
 // PPD42NS, the cheaper version of the particle sensor
 #define PPD_PIN_PM1 GPS_SERIAL_TX
@@ -237,8 +241,10 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 #define PPD_API_PIN 5
 
 // SDS011, the more expensive version of the particle sensor
-#define SDS_READ 1
+#define SDS_READ 0
 #define SDS_API_PIN 1
+
+#define GC_READ 1
 
 // PMS1003, PMS300, 3PMS5003, PMS6003, PMS7003
 #define PMS_READ 0
@@ -297,7 +303,7 @@ static const char MEASUREMENT_NAME_INFLUX[] PROGMEM = "feinstaub";
 #define MHZ19_READ 0
 
 // automatic firmware updates
-#define AUTO_UPDATE 1
+#define AUTO_UPDATE 0
 
 // use beta firmware
 #define USE_BETA 0
